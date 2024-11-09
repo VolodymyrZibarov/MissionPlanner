@@ -2230,7 +2230,7 @@ namespace MissionPlanner
         /// </summary>
         private async void joysticksend()
         {
-            float rate = 50; // 1000 / 50 = 20 hz
+            float rate = 10;
             int count = 0;
 
             DateTime lastratechange = DateTime.Now;
@@ -2427,7 +2427,7 @@ namespace MissionPlanner
                         }
                     }
 
-                    await Task.Delay(40).ConfigureAwait(false);
+                    await Task.Delay(5).ConfigureAwait(false);
                 }
                 catch
                 {
