@@ -133,11 +133,11 @@ namespace MissionPlanner.Controls
                     var value = (decimal)property.GetValue(preferences);
                     var decimalUpDown = new NumericUpDown
                     {
-                        Value = value,
                         Minimum = Math.Min((decimal)attribute.Min, value),
                         Maximum = Math.Max((decimal)attribute.Max, value),
                         Increment = (decimal)attribute.Increment,
-                        DecimalPlaces = attribute.DecimalPlaces
+                        DecimalPlaces = attribute.DecimalPlaces,
+                        Value = value
                     };
                     decimalUpDown.ValueChanged += (sender, e) =>
                     {
