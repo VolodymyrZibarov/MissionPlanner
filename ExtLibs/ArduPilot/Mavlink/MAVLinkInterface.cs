@@ -2669,14 +2669,14 @@ Mission Planner waits for 2 valid heartbeat packets before connecting
 
         [Obsolete]
         public bool doCommand(MAV_CMD actionid, float p1, float p2, float p3, float p4, float p5, float p6, float p7,
-            bool requireack = true)
+            bool requireack = false)
         {
             return doCommand(MAV.sysid, MAV.compid, actionid, p1, p2, p3, p4, p5, p6, p7, requireack, null);
         }
 
         public bool doCommand(byte sysid, byte compid, MAV_CMD actionid, float p1, float p2, float p3,
             float p4,
-            float p5, float p6, float p7, bool requireack = true, Action uicallback = null)
+            float p5, float p6, float p7, bool requireack = false, Action uicallback = null)
         {
             return doCommandAsync(sysid, compid, actionid, p1, p2, p3, p4, p5, p6, p7, requireack, uicallback)
                 .AwaitSync();
@@ -2684,7 +2684,7 @@ Mission Planner waits for 2 valid heartbeat packets before connecting
 
         public async Task<bool> doCommandAsync(byte sysid, byte compid, MAV_CMD actionid, float p1, float p2, float p3,
             float p4,
-            float p5, float p6, float p7, bool requireack = true, Action uicallback = null)
+            float p5, float p6, float p7, bool requireack = false, Action uicallback = null)
         {
             if (BaseStream == null || BaseStream.IsOpen == false)
                 return false;
@@ -2834,7 +2834,7 @@ Mission Planner waits for 2 valid heartbeat packets before connecting
         }
 
         public bool doCommandInt(byte sysid, byte compid, MAV_CMD actionid, float p1, float p2, float p3, float p4,
-            int p5, int p6, float p7, bool requireack = true, Action uicallback = null,
+            int p5, int p6, float p7, bool requireack = false, Action uicallback = null,
             MAV_FRAME frame = MAV_FRAME.GLOBAL)
         {
             return doCommandIntAsync(sysid, compid, actionid, p1, p2, p3, p4, p5, p6, p7, requireack, uicallback, frame)
@@ -2843,7 +2843,7 @@ Mission Planner waits for 2 valid heartbeat packets before connecting
 
         public async Task<bool> doCommandIntAsync(byte sysid, byte compid, MAV_CMD actionid, float p1, float p2,
             float p3, float p4,
-            int p5, int p6, float p7, bool requireack = true, Action uicallback = null,
+            int p5, int p6, float p7, bool requireack = false, Action uicallback = null,
             MAV_FRAME frame = MAV_FRAME.GLOBAL)
         {
             if (BaseStream == null || BaseStream.IsOpen == false)
