@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WebCamService;
 using ZedGraph;
+using static alglib;
 using LogAnalyzer = MissionPlanner.Utilities.LogAnalyzer;
 using TableLayoutPanelCellPosition = System.Windows.Forms.TableLayoutPanelCellPosition;
 using UnauthorizedAccessException = System.UnauthorizedAccessException;
@@ -2910,7 +2911,7 @@ namespace MissionPlanner.GCSViews
 
             if (ModifierKeys == Keys.Control)
             {
-                goHereToolStripMenuItem_Click(null, null);
+                setPseudoGPSToolStripMenuItem_Click(null, null);
                 return;
             }
 
@@ -6655,6 +6656,82 @@ namespace MissionPlanner.GCSViews
 
             // Pass `this` to keep the pop-out always on top
             form.Show(this);
+        }
+
+        private void setPseudoGPSToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MainV2.comPort.BaseStream.IsOpen)
+            {
+                try
+                {
+                    MainV2.comPort.doCommandInt(
+                        MainV2.comPort.MAV.sysid,
+                        MainV2.comPort.MAV.compid,
+                        MAVLink.MAV_CMD.EXTERNAL_POSITION_ESTIMATE,
+                        0,
+                        0,
+                        float.NaN,
+                        0,
+                        (int)(MouseDownStart.Lat * 1e7),
+                        (int)(MouseDownStart.Lng * 1e7),
+                        float.NaN
+                    );
+
+                    Console.WriteLine("External GPS coordinates sent!");
+                }
+                catch
+                {
+                    CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
+                }
+            }
+        }
+
+        private void setMagCalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MainV2.comPort.BaseStream.IsOpen)
+            {
+                try
+                {
+                    // Get current vehicle location
+                    var cs = MainV2.comPort.MAV.cs;
+                    double lat1 = cs.lat;
+                    double lon1 = cs.lng;
+
+                    // Target is MouseDownStart
+                    double lat2 = MouseDownStart.Lat;
+                    double lon2 = MouseDownStart.Lng;
+
+                    // Convert degrees to radians
+                    double toRad = Math.PI / 180.0;
+                    double φ1 = lat1 * toRad;
+                    double φ2 = lat2 * toRad;
+                    double Δλ = (lon2 - lon1) * toRad;
+
+                    // Compute bearing
+                    double y = Math.Sin(Δλ) * Math.Cos(φ2);
+                    double x = Math.Cos(φ1) * Math.Sin(φ2) - Math.Sin(φ1) * Math.Cos(φ2) * Math.Cos(Δλ);
+                    double θ = Math.Atan2(y, x); // radians
+                    double bearing = (θ * 180.0 / Math.PI + 360.0) % 360.0; // degrees normalized to [0,360)
+
+                    // Send FIXED_MAG_CAL_YAW with the computed yaw (degrees)
+                    MainV2.comPort.doCommandInt(
+                        MainV2.comPort.MAV.sysid,
+                        MainV2.comPort.MAV.compid,
+                        MAVLink.MAV_CMD.FIXED_MAG_CAL_YAW,
+                        (int)(bearing),
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    );
+                }
+                catch
+                {
+                    CustomMessageBox.Show(Strings.CommandFailed, Strings.ERROR);
+                }
+            }
         }
     }
 }

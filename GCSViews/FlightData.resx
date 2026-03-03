@@ -6451,4 +6451,18 @@
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.MyUserControl, MissionPlanner.Controls, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
+  <data name="setPseudoGPSToolStripMenuItem.Text" xml:space="preserve">
+    <value>I'm Here</value>
+    <comment>inject Pseudo GPS</comment>
+  </data>
+  <data name="setPseudoGPSToolStripMenuItem.Size" xml:space="preserve">
+    <value>187,22</value>
+  </data>
+  <data name="setMagCalToolStripMenuItem.Text" xml:space="preserve">
+    <value>Calibrate Compass</value>
+    <comment>MAV_CMD_FIXED_MAG_CAL_YAW</comment>
+  </data>
+  <data name="setMagCalToolStripMenuItem.Size" xml:space="preserve">
+    <value>187,22</value>
+  </data>
 </root>

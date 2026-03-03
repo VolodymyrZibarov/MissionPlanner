@@ -194,6 +194,8 @@ namespace MissionPlanner.GCSViews
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.zg1 = new ZedGraph.ZedGraphControl();
             this.contextMenuStripMap = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.setPseudoGPSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setMagCalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.goHereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flyToHereAltToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flyToCoordsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -2515,6 +2517,8 @@ namespace MissionPlanner.GCSViews
             // contextMenuStripMap
             // 
             this.contextMenuStripMap.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setPseudoGPSToolStripMenuItem,
+            this.setMagCalToolStripMenuItem,
             this.goHereToolStripMenuItem,
             this.flyToHereAltToolStripMenuItem,
             this.flyToCoordsToolStripMenuItem,
@@ -2530,6 +2534,18 @@ namespace MissionPlanner.GCSViews
             this.gimbalVideoToolStripMenuItem});
             this.contextMenuStripMap.Name = "contextMenuStrip1";
             resources.ApplyResources(this.contextMenuStripMap, "contextMenuStripMap");
+            //
+            // setPseudoGPSToolStripMenuItem
+            //
+            this.setPseudoGPSToolStripMenuItem.Name = "setPseudoGPSToolStripMenuItem";
+            resources.ApplyResources(this.setPseudoGPSToolStripMenuItem, "setPseudoGPSToolStripMenuItem");
+            this.setPseudoGPSToolStripMenuItem.Click += new System.EventHandler(this.setPseudoGPSToolStripMenuItem_Click);
+            //
+            // setMagCalToolStripMenuItem
+            //
+            this.setMagCalToolStripMenuItem.Name = "setMagCalToolStripMenuItem";
+            resources.ApplyResources(this.setMagCalToolStripMenuItem, "setMagCalToolStripMenuItem");
+            this.setMagCalToolStripMenuItem.Click += new System.EventHandler(this.setMagCalToolStripMenuItem_Click);
             // 
             // goHereToolStripMenuItem
             // 
@@ -3210,5 +3226,7 @@ namespace MissionPlanner.GCSViews
         private ToolStripMenuItem gimbalVideoFullSizedToolStripMenuItem;
         private ToolStripMenuItem gimbalVideoMiniToolStripMenuItem;
         private ToolStripMenuItem gimbalVideoPopOutToolStripMenuItem;
+        private ToolStripMenuItem setPseudoGPSToolStripMenuItem;
+        private ToolStripMenuItem setMagCalToolStripMenuItem;
     }
 }
