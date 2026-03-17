@@ -14,6 +14,7 @@ namespace MissionPlanner.Maps
         public static bool DisplayNavBearingSetting = true;
         public static bool DisplayRadiusSetting = true;
         public static bool DisplayTargetSetting = true;
+        public static bool DisplayCamHeadingSetting = true;
         public static int length = 500;
         public static InactiveDisplayStyleEnum InactiveDisplayStyle = InactiveDisplayStyleEnum.Normal;
         
@@ -26,7 +27,9 @@ namespace MissionPlanner.Maps
         protected bool DisplayNavBearing => DisplayNavBearingSetting && !IsTransparent;
         protected bool DisplayRadius => DisplayRadiusSetting && !IsTransparent;
         protected bool DisplayTarget => DisplayTargetSetting && !IsTransparent;
-        
+        protected bool DisplayCamHeading => DisplayCamHeadingSetting && !IsTransparent;
+
+
         public GMapMarkerBase(PointLatLng pos):base(pos)
         {
         }

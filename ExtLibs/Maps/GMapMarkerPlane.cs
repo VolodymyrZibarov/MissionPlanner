@@ -51,10 +51,11 @@ namespace MissionPlanner.Maps
         float nav_bearing = -1;
         float radius = -1;
         float target = -1;
+        float cam_heading = -181;
         int which = 0;
 
         public GMapMarkerPlane(int which, PointLatLng p, float heading, float cog, float nav_bearing, float target,
-            float radius)
+            float radius, float cam_heading = -181)
             : base(p)
         {
             this.heading = heading;
@@ -63,6 +64,7 @@ namespace MissionPlanner.Maps
             this.nav_bearing = nav_bearing;
             this.radius = radius;
             this.which = which;
+            this.cam_heading = cam_heading;
             Size = icon.Size;
         }
 
@@ -71,6 +73,8 @@ namespace MissionPlanner.Maps
         public float Nav_bearing { get => nav_bearing; set => nav_bearing = value; }
         public float Radius { get => radius; set => radius = value; }
         public float Target { get => target; set => target = value; }
+        public float Cam_heading { get => cam_heading; set => cam_heading = value; }
+
 
         public override void OnRender(IGraphics g)
         {
@@ -94,6 +98,13 @@ namespace MissionPlanner.Maps
             }
             catch
             {
+            }
+
+            if (DisplayCamHeading && cam_heading >= -180 && cam_heading <= 180)
+            {
+                g.DrawLine(new Pen(Color.Magenta, 2), 0.0f, 0.0f,
+                    (float) Math.Cos((cam_heading - 90) * MathHelper.deg2rad) * length,
+                    (float) Math.Sin((cam_heading - 90) * MathHelper.deg2rad) * length);
             }
 
             if (DisplayNavBearing)

@@ -44,6 +44,10 @@ namespace MissionPlanner
                         itemp.Nav_bearing = MAV.cs.nav_bearing;
                         itemp.Radius = (float)CurrentState.fromDistDisplayUnit(MAV.cs.radius);
                         itemp.IsActive = MAV == MainV2.comPort?.MAV;
+                        if (MAV.GimbalManager != null)
+                        {
+                            itemp.Cam_heading = MAV.GimbalManager.GetYaw();
+                        }
                         return null;
                     }
                     else if (item is GMapMarkerQuad)
@@ -77,6 +81,11 @@ namespace MissionPlanner
             if (MAV.aptype == MAVLink.MAV_TYPE.FIXED_WING ||
                 MAV.aptype >= MAVLink.MAV_TYPE.VTOL_DUOROTOR && MAV.aptype <= MAVLink.MAV_TYPE.VTOL_RESERVED5)
             {
+                float cam_heading = -181;
+                if (MAV.GimbalManager != null)
+                {
+                    cam_heading = MAV.GimbalManager.GetYaw();
+                }
                 return new GMapMarkerPlane(
                     MAV.sysid - 1,
                     portlocation,
@@ -84,7 +93,8 @@ namespace MissionPlanner
                     MAV.cs.groundcourse,
                     MAV.cs.nav_bearing,
                     MAV.cs.target_bearing,
-                    (float)CurrentState.fromDistDisplayUnit(MAV.cs.radius))
+                    (float)CurrentState.fromDistDisplayUnit(MAV.cs.radius),
+                    cam_heading)
                 {
                     IsActive = MAV == MainV2.comPort?.MAV,
                     ToolTipText = ArduPilot.Common.speechConversion(MAV, "" + Settings.Instance["mapicondesc"]),
