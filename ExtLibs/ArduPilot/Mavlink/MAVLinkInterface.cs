@@ -2645,11 +2645,11 @@ Mission Planner waits for 2 valid heartbeat packets before connecting
             else
             {
                 if (armit)
-                    return await doCommandAsync(sysid, compid, MAV_CMD.COMPONENT_ARM_DISARM, 1, 0, 0, 0, 0, 0, 0)
+                    return await doCommandAsync(sysid, compid, MAV_CMD.COMPONENT_ARM_DISARM, 1, 0, 0, 0, 0, 0, 0, true)
                         .ConfigureAwait(false);
                 else
                     return await doCommandAsync(sysid, compid, MAV_CMD.COMPONENT_ARM_DISARM, 0, 0, 0, 0, 0,
-                        0, 0).ConfigureAwait(false);
+                        0, 0, true).ConfigureAwait(false);
             }
         }
 
