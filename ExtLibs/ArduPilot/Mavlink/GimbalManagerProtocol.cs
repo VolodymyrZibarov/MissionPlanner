@@ -136,19 +136,19 @@ namespace MissionPlanner.ArduPilot.Mavlink
             return q;
         }
 
-        public int GetYaw(byte gimbal_device_id = 0)
+        public float GetYaw(byte gimbal_device_id = 0)
         {
             if (!GimbalStatus.TryGetValue(gimbal_device_id, out var status))
             {
-                return 0;
+                return -181;
             }
             var q = new Quaternion(status.q[0], status.q[1], status.q[2], status.q[3]);
             var yaw = q.get_euler_yaw() * MathHelper.rad2deg;
-            if (!YawInVehicleFrame(gimbal_device_id))
+            if (YawInVehicleFrame(gimbal_device_id))
             {
-                yaw -= cs.yaw;
+                yaw += cs.yaw;
             }
-            return (int)yaw;
+            return (float)yaw;
         }
 
         public Task<bool> RetractAsync(byte gimbal_device_id = 0)

@@ -99,13 +99,16 @@ namespace MissionPlanner.Maps
             catch
             {
             }
-
-            if (DisplayCamHeading && cam_heading >= -180 && cam_heading <= 180)
+            try
             {
-                g.DrawLine(new Pen(Color.Magenta, 2), 0.0f, 0.0f,
-                    (float) Math.Cos((cam_heading - 90) * MathHelper.deg2rad) * length,
-                    (float) Math.Sin((cam_heading - 90) * MathHelper.deg2rad) * length);
+                if (DisplayCamHeading && cam_heading >= -180 && cam_heading <= 180)
+                {
+                    g.DrawLine(new Pen(Color.Magenta, 2), 0.0f, 0.0f,
+                        (float)Math.Cos((cam_heading - 90) * MathHelper.deg2rad) * length,
+                        (float)Math.Sin((cam_heading - 90) * MathHelper.deg2rad) * length);
+                }
             }
+            catch { }
 
             if (DisplayNavBearing)
                 g.DrawLine(new Pen(Color.Green, 2), 0.0f, 0.0f,
