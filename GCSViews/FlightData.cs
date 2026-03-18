@@ -369,6 +369,7 @@ namespace MissionPlanner.GCSViews
 
             gMapControl1.OnMarkerEnter += gMapControl1_OnMarkerEnter;
             gMapControl1.OnMarkerLeave += gMapControl1_OnMarkerLeave;
+            gMapControl1.OnMarkerClick += gMapControl1_OnMarkerClick;
 
             gMapControl1.RoutesEnabled = true;
             gMapControl1.PolygonsEnabled = true;
@@ -3003,6 +3004,22 @@ namespace MissionPlanner.GCSViews
         {
             CurrentGMapMarker = null;
         }
+
+        private void gMapControl1_OnMarkerClick(GMapMarker item, object ei)
+        {
+            var e = ei as MouseEventArgs;
+            if (item is GMapMarkerPOI)
+            {
+                if (e != null && e.Button == MouseButtons.Left)
+                {
+                    string coords = item.Position.Lat.ToString(CultureInfo.InvariantCulture) + ";"
+                        + item.Position.Lng.ToString(CultureInfo.InvariantCulture);
+                    Clipboard.SetText(coords);
+                }
+                return;
+            }
+        }
+
 
         private void gMapControl1_OnPositionChanged(PointLatLng point)
         {
@@ -5960,28 +5977,35 @@ namespace MissionPlanner.GCSViews
             var location = "";
             InputBox.Show("Enter POI Coords", "Please enter the coords 'lat;long;alt' or 'lat;long'", ref location);
 
-            var split = location.Split(';');
+            // Normalize: try splitting by ';' first, then fall back to ', ' (Google Maps format)
+            string[] split = location.Contains(';')
+                ? location.Split(';')
+                : location.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
 
             if (split.Length == 3)
             {
-                var lat = float.Parse(split[0], CultureInfo.InvariantCulture);
-                var lng = float.Parse(split[1], CultureInfo.InvariantCulture);
-                var alt = float.Parse(split[2], CultureInfo.InvariantCulture);
-
+                var lat = ParseCoord(split[0]);
+                var lng = ParseCoord(split[1]);
+                var alt = ParseCoord(split[2]);
                 POI.POIAdd(new PointLatLngAlt(lat, lng, alt));
             }
             else if (split.Length == 2)
             {
-                var lat = float.Parse(split[0], CultureInfo.InvariantCulture);
-                var lng = float.Parse(split[1], CultureInfo.InvariantCulture);
+                var lat = ParseCoord(split[0]);
+                var lng = ParseCoord(split[1]);
                 var alt = srtm.getAltitude(MouseDownStart.Lat, MouseDownStart.Lng).alt / CurrentState.multiplieralt;
-
                 POI.POIAdd(new PointLatLngAlt(lat, lng, alt));
             }
             else
             {
                 CustomMessageBox.Show(Strings.InvalidField, Strings.ERROR);
             }
+        }
+
+        static float ParseCoord(string s)
+        {
+            s = s.Trim().Replace(',', '.');
+            return float.Parse(s, CultureInfo.InvariantCulture);
         }
 
         private void hud1_Load(object sender, EventArgs e)

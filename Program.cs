@@ -278,7 +278,7 @@ namespace MissionPlanner
             string strVersion = File.Exists("version.txt")
                 ? File.ReadAllText("version.txt")
                 : System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            Splash.Text = name + " " + Application.ProductVersion + " KORT v1.0";
+            Splash.Text = name + " " + Application.ProductVersion + " KORT v1.0.1";
             Console.WriteLine("Splash.Show()");
             Splash.Show();
 
