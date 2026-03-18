@@ -51,11 +51,11 @@ namespace MissionPlanner.Maps
         float nav_bearing = -1;
         float radius = -1;
         float target = -1;
-        float cam_heading = -181;
+        float cam_heading = -1;
         int which = 0;
 
         public GMapMarkerPlane(int which, PointLatLng p, float heading, float cog, float nav_bearing, float target,
-            float radius, float cam_heading = -181)
+            float radius, float cam_heading = -1)
             : base(p)
         {
             this.heading = heading;
@@ -101,7 +101,7 @@ namespace MissionPlanner.Maps
             }
             try
             {
-                if (DisplayCamHeading && cam_heading >= -180 && cam_heading <= 180)
+                if (DisplayCamHeading && cam_heading >= 0 && cam_heading <= 360)
                 {
                     g.DrawLine(new Pen(Color.Magenta, 2), 0.0f, 0.0f,
                         (float)Math.Cos((cam_heading - 90) * MathHelper.deg2rad) * length,

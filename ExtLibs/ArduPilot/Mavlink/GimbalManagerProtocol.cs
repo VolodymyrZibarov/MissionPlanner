@@ -140,7 +140,7 @@ namespace MissionPlanner.ArduPilot.Mavlink
         {
             if (!GimbalStatus.TryGetValue(gimbal_device_id, out var status))
             {
-                return -181;
+                return -1;
             }
             var q = new Quaternion(status.q[0], status.q[1], status.q[2], status.q[3]);
             var yaw = q.get_euler_yaw() * MathHelper.rad2deg;
