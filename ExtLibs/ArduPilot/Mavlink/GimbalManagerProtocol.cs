@@ -146,7 +146,7 @@ namespace MissionPlanner.ArduPilot.Mavlink
             var yaw = q.get_euler_yaw() * MathHelper.rad2deg;
             if (YawInVehicleFrame(gimbal_device_id))
             {
-                yaw += cs.yaw;
+                yaw = (yaw + cs.yaw + 360) % 360;
             }
             return (float)yaw;
         }

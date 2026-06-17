@@ -1143,6 +1143,15 @@ namespace MissionPlanner
         [DisplayText("Mode")]
         public string mode { get; set; }
 
+        [GroupText("NAV")]
+        [DisplayFieldName("modenum.Field")]
+        [DisplayText("ModeNum")]
+        public uint modenum
+        {
+            get => _mode;
+            set => _mode = value;
+        }
+
         [DisplayFieldName("climbrate.Field")]
         [DisplayText("ClimbRate (speed)")]
         [GroupText("Position")]
