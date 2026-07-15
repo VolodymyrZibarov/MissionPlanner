@@ -673,12 +673,21 @@ namespace MissionPlanner.GCSViews
                     MainV2.comPort.logreadmode = true;
                     MainV2.comPort.logplaybackfile = new BinaryReader(File.OpenRead(file));
                     MainV2.comPort.lastlogread = DateTime.MinValue;
+                    logStartTime = DateTime.MinValue;
 
                     LBL_logfn.Text = Path.GetFileName(file);
 
                     log.Info("Open logfile " + file);
 
                     MainV2.comPort.getHeartBeat();
+
+                    // Capture the timestamp of the first packet as log start time
+                    if (MainV2.comPort.lastlogread != DateTime.MinValue)
+                        logStartTime = MainV2.comPort.lastlogread;
+
+                    // Rewind so playback starts from the beginning
+                    MainV2.comPort.logplaybackfile.BaseStream.Seek(0, SeekOrigin.Begin);
+                    MainV2.comPort.lastlogread = DateTime.MinValue;
 
                     tracklog.Value = 0;
                     tracklog.Minimum = 0;
@@ -1262,6 +1271,7 @@ namespace MissionPlanner.GCSViews
         }
 
         private string tlogdir = Settings.Instance.LogDir;
+        private DateTime logStartTime = DateTime.MinValue;
 
         private void BUT_loadtelem_Click(object sender, EventArgs e)
         {
@@ -5521,9 +5531,23 @@ namespace MissionPlanner.GCSViews
                     }
 
                     if (lbl_logpercent.Visible)
-                        lbl_logpercent.Text =
-                            (MainV2.comPort.logplaybackfile.BaseStream.Position /
-                             (double) MainV2.comPort.logplaybackfile.BaseStream.Length).ToString("0.00%");
+                    {
+                        var percent = (MainV2.comPort.logplaybackfile.BaseStream.Position /
+                                       (double) MainV2.comPort.logplaybackfile.BaseStream.Length).ToString("0.00%");
+                        var currentTime = MainV2.comPort.lastlogread;
+                        if (logStartTime != DateTime.MinValue && currentTime != DateTime.MinValue && currentTime >= logStartTime)
+                        {
+                            var elapsed = currentTime - logStartTime;
+                            var timeStr = elapsed.TotalHours >= 1
+                                ? elapsed.ToString(@"h\:mm\:ss")
+                                : elapsed.ToString(@"mm\:ss");
+                            lbl_logpercent.Text = $"{percent}  [+{timeStr} = {currentTime:HH:mm:ss}]";
+                        }
+                        else
+                        {
+                            lbl_logpercent.Text = percent;
+                        }
+                    }
 
                     if (lbl_playbackspeed.Visible)
                         lbl_playbackspeed.Text = "x " + LogPlayBackSpeed;
