@@ -34,6 +34,7 @@
         Hatlr2,
         Custom1,
         Custom2,
-        UINT16_MAX
+        UINT16_MAX,
+        SerialRC
     }
 }

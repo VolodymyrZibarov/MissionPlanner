@@ -1302,5 +1302,15 @@ namespace MissionPlanner.Joystick
                 return new JoystickWindows(func);
             }
         }
+
+        public static JoystickBase Create(Func<MAVLinkInterface> func, string deviceName)
+        {
+            if (deviceName != null && deviceName.StartsWith(JoystickSerial.DevicePrefix))
+            {
+                return new JoystickSerial(func);
+            }
+
+            return Create(func);
+        }
     }
 }

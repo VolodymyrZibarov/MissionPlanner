@@ -3,6 +3,7 @@ using MissionPlanner.Utilities;
 using SharpDX.DirectInput;
 using System;
 using System.Drawing;
+using System.IO.Ports;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -14,7 +15,8 @@ namespace MissionPlanner.Joystick
         bool startup = true;
 
         int noButtons = 0;
-        private int maxaxis = 16;
+        private int maxaxis = 18;
+        private Label LBL_serialstatus;
 
         public JoystickSetup()
         {
@@ -39,6 +41,11 @@ namespace MissionPlanner.Joystick
                 CustomMessageBox.Show("Error geting joystick list: do you have the directx redist installed?");
                 this.Close();
                 return;
+            }
+
+            foreach (var port in SerialPort.GetPortNames())
+            {
+                CMB_joysticks.Items.Add(JoystickSerial.DevicePrefix + port);
             }
 
             if (CMB_joysticks.Items.Count > 0 && CMB_joysticks.SelectedIndex == -1)
@@ -115,6 +122,14 @@ namespace MissionPlanner.Joystick
                     this.Width = ax.Right;
             }
 
+            LBL_serialstatus = new Label()
+            {
+                Location = new Point(CMB_joysticks.Right + 10, CMB_joysticks.Top),
+                AutoSize = true,
+                Text = "Disconnected"
+            };
+            Controls.Add(LBL_serialstatus);
+
             this.ResumeLayout();
 
             if (MainV2.joystick != null && MainV2.joystick.enabled)
@@ -123,7 +138,32 @@ namespace MissionPlanner.Joystick
                 BUT_enable.Text = "Disable";
             }
 
+            UpdateSerialUiVisibility();
+
             startup = false;
+        }
+
+        private bool IsSerialDeviceSelected()
+        {
+            return CMB_joysticks.Text != null && CMB_joysticks.Text.StartsWith(MissionPlanner.Joystick.JoystickSerial.DevicePrefix);
+        }
+
+        private void UpdateSerialUiVisibility()
+        {
+            bool isSerial = IsSerialDeviceSelected();
+
+            for (int a = 1; a <= maxaxis; a++)
+            {
+                var ctl = Controls.Find("axis" + a, false).FirstOrDefault() as JoystickAxis;
+                if (ctl != null)
+                    ctl.ShowAxisConfig = !isSerial;
+            }
+
+            CHK_elevons.Visible = !isSerial;
+            BUT_save.Visible = !isSerial;
+
+            if (LBL_serialstatus != null)
+                LBL_serialstatus.Visible = isSerial;
         }
 
         int[] getButtonNumbers()
@@ -151,14 +191,16 @@ namespace MissionPlanner.Joystick
                 }
 
                 // all config is loaded from the xmls
-                var joy = JoystickBase.Create(() => MainV2.comPort);
+                var joy = JoystickBase.Create(() => MainV2.comPort, CMB_joysticks.Text);
 
                 joy.elevons = CHK_elevons.Checked;
 
                 //show error message if a joystick is not connected when Enable is clicked
                 if (!joy.start(CMB_joysticks.Text))
                 {
-                    CustomMessageBox.Show("Please Connect a Joystick", "No Joystick");
+                    CustomMessageBox.Show(
+                        IsSerialDeviceSelected() ? "Could not open " + CMB_joysticks.Text : "Please Connect a Joystick",
+                        "No Joystick");
                     joy.Dispose();
                     return;
                 }
@@ -182,6 +224,7 @@ namespace MissionPlanner.Joystick
 
 
                 //timer1.Stop();
+                LBL_serialstatus.Text = "Disconnected";
 
                 BUT_enable.Text = "Enable";
             }
@@ -201,6 +244,13 @@ namespace MissionPlanner.Joystick
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (MainV2.joystick is MissionPlanner.Joystick.JoystickSerial serialJoystick && LBL_serialstatus != null)
+            {
+                LBL_serialstatus.Text = !serialJoystick.IsConnected ? "Disconnected"
+                    : serialJoystick.IsStale ? "Connected (stale)"
+                    : "Connected";
+            }
+
             try
             {
                 if (MainV2.joystick == null || MainV2.joystick.enabled == false)
@@ -209,7 +259,7 @@ namespace MissionPlanner.Joystick
                     var joy = MainV2.joystick;
                     if (joy == null)
                     {
-                        joy = JoystickBase.Create(() => MainV2.comPort);
+                        joy = JoystickBase.Create(() => MainV2.comPort, CMB_joysticks.Text);
                         for (int a = 1; a <= maxaxis; a++)
                         {
                             var config = joy.getChannel(a);
@@ -318,6 +368,11 @@ namespace MissionPlanner.Joystick
             foreach (var device in joysticklist)
             {
                 CMB_joysticks.Items.Add(device);
+            }
+
+            foreach (var port in SerialPort.GetPortNames())
+            {
+                CMB_joysticks.Items.Add(JoystickSerial.DevicePrefix + port);
             }
 
             if (CMB_joysticks.Items.Count > 0 && CMB_joysticks.SelectedIndex == -1)
@@ -494,6 +549,8 @@ namespace MissionPlanner.Joystick
             catch
             {
             }
+
+            UpdateSerialUiVisibility();
         }
 
        

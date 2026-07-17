@@ -61,6 +61,22 @@ namespace MissionPlanner.Joystick
             set { revCH.Checked = value; }
         }
 
+        /// <summary>
+        /// Hides the axis-source dropdown/detect/expo/reverse controls, leaving only the
+        /// label and live value bar - used when the channel is driven by a fixed-mapping
+        /// input source (e.g. serial RC) rather than a configurable physical joystick axis.
+        /// </summary>
+        public bool ShowAxisConfig
+        {
+            set
+            {
+                CMB_CH.Visible = value;
+                BUT_detch.Visible = value;
+                revCH.Visible = value;
+                expo_ch.Visible = value;
+            }
+        }
+
         /// <summary> 
         /// Required designer variable.
         /// </summary>
